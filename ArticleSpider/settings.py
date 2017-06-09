@@ -75,6 +75,13 @@ IMAGES_URLS_FIELD = "front_image_url"
 project_dir = os.path.abspath(os.path.dirname(__file__))
 IMAGES_STORE = os.path.join(project_dir, 'images')
 
+# 设置搜索路径
+import os
+import sys
+
+BASE_DIR = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.join(BASE_DIR, 'ArticleSpider'))
+
 # IMAGES_MIN_HEIGHT = 100
 # IMAGES_MIN_WIDTH = 100
 
@@ -102,4 +109,7 @@ IMAGES_STORE = os.path.join(project_dir, 'images')
 MYSQL_HOST = "127.0.0.1"
 MYSQL_DBNAME = "article_spider"
 MYSQL_USER = "root"
-MYSQL_PASSWORD = "12"
+MYSQL_PASSWORD = "123"
+
+SQL_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+SQL_DATE_FORMAT = "%Y-%m-%d"
