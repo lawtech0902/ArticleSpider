@@ -27,6 +27,10 @@ class ZhihuSpider(scrapy.Spider):
         'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/603.2.4 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.4"
     }
 
+    custom_settings = {
+        "COOKIES_ENABLED": True
+    }
+
     def parse(self, response):
         """
         提取出html页面中的所有url 并跟踪这些url进行一步爬取
@@ -89,7 +93,8 @@ class ZhihuSpider(scrapy.Spider):
 
             question_item = item_loader.load_item()
 
-        yield scrapy.Request(self.start_answer_url.format(question_id, 20, 0), headers=self.headers, callback=self.parse_answer)
+        yield scrapy.Request(self.start_answer_url.format(question_id, 20, 0), headers=self.headers,
+                             callback=self.parse_answer)
         yield question_item
 
     def parse_answer(self, reponse):
