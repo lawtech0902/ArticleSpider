@@ -28,7 +28,7 @@ ROBOTSTXT_OBEY = False
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 10
+DOWNLOAD_DELAY = 2
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
 # CONCURRENT_REQUESTS_PER_IP = 16
@@ -53,10 +53,11 @@ COOKIES_ENABLED = False
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-DOWNLOADER_MIDDLEWARES = {
-    'ArticleSpider.middlewares.RandomUserAgentMiddleware': 543,
-    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
-}
+# DOWNLOADER_MIDDLEWARES = {
+#     'ArticleSpider.middlewares.RandomUserAgentMiddleware': 543,
+#     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+#     'ArticleSpider.middlewares.JSPageMiddleware': 1,
+# }
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
@@ -70,7 +71,8 @@ ITEM_PIPELINES = {
     # 'ArticleSpider.pipelines.JsonExporterPipeline': 2,
     # # 'scrapy.pipelines.images.ImagesPipeline': 1,
     # 'ArticleSpider.pipelines.ArticleImagePipeline': 1,
-    'ArticleSpider.pipelines.MysqlTwistedPipeline': 1,
+    # 'ArticleSpider.pipelines.MysqlTwistedPipeline': 1,
+    'ArticleSpider.pipelines.ElasticsearchPipeline': 1,
 }
 IMAGES_URLS_FIELD = "front_image_url"
 project_dir = os.path.abspath(os.path.dirname(__file__))

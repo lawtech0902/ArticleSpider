@@ -2,9 +2,13 @@
 import scrapy
 import re
 import datetime
+
+from scrapy.xlib.pydispatch import dispatcher
+from scrapy import signals
 from scrapy.http import Request
 from urllib import parse
 from scrapy.loader import ItemLoader
+from selenium import webdriver
 
 from ArticleSpider.items import JobBoleArticleItem, ArticleItemLoader
 from ArticleSpider.utils.common import get_md5
@@ -15,14 +19,42 @@ class JobboleSpider(scrapy.Spider):
     allowed_domains = ["blog.jobbole.com"]
     start_urls = ['http://blog.jobbole.com/all-posts/']
 
+    # def __init__(self):
+    #     self.browser = webdriver.Chrome(executable_path="/Users/lawtech/TempSpace/chromedriver")
+    #     super(JobboleSpider, self).__init__()
+    #     dispatcher.connect(self.spider_closed, signals.spider_closed)
+    #
+    # def spider_closed(self, spider):
+    #     """
+    #     当爬虫退出的时候关闭Chrome
+    #     :param spider:
+    #     :return:
+    #     """
+    #     print("spider closed")
+    #     self.browser.quit()
+
+    # 收集伯乐在线所有404的url以及404页面数
+    handle_httpstatus_list = [404]
+
+    def __init__(self):
+        self.fail_urls = []
+        super(JobboleSpider, self).__init__()
+        dispatcher.connect(self.handle_spider_closed, signals.spider_closed)
+
+    def handle_spider_closed(self, spider, reason):
+        self.crawler.stats.set_value("failed_urls", ",".join(self.fail_urls))
+        pass
+
     def parse(self, response):
         """
         1. 获取文章列表页中的文章url并交给解析函数进行具体字段的解析
         2. 获取下一页的url并交给scrapy进行下载
-        :param response: 
-        :return: 
         """
+        if response.status == 404:
+            self.fail_urls.append(response.url)
+            self.crawler.stats.inc_value("failed_url")
 
+        # pass
         # 解析列表页中的所有文章url并交给解析函数进行具体字段的解析
         post_nodes = response.css("#archive .floated-thumb .post-thumb a")
         for post_node in post_nodes:
@@ -37,7 +69,7 @@ class JobboleSpider(scrapy.Spider):
             yield Request(url=parse.urljoin(response.url, next_url), callback=self.parse)
 
     def parse_detail(self, response):
-        # article_item = JobBoleArticleItem()
+        article_item = JobBoleArticleItem()
         #
         # # 通过css选择器提取字段
         # front_image_url = response.meta.get("front_image_url", "")  # 文章封面图
